@@ -14,12 +14,6 @@ type Event struct {
 
 // Record represents a single Kinesis record.
 type Record struct {
-	Kinesis struct {
-		SchemaVersion  string `json:"kinesisSchemaVersion"`
-		PartitionKey   string `json:"partitionKey"`
-		SequenceNumber string `json:"sequenceNumber"`
-		Data           []byte `json:"data"`
-	}
 	EventSource       string `json:"eventSource"`
 	EventVersion      string `json:"eventVersion"`
 	EventID           string `json:"eventID"`
@@ -27,6 +21,12 @@ type Record struct {
 	InvokeIdentityARN string `json:"invokeIdentityArn"`
 	AWSRegion         string `json:"awsRegion"`
 	EventSourceARN    string `json:"eventSourceARN"`
+	Kinesis           struct {
+		SchemaVersion  string `json:"kinesisSchemaVersion"`
+		PartitionKey   string `json:"partitionKey"`
+		SequenceNumber string `json:"sequenceNumber"`
+		Data           []byte `json:"data"`
+	}
 }
 
 // Data returns the payload.

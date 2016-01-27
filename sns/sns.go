@@ -8,14 +8,16 @@ import (
 	"github.com/apex/go-apex"
 )
 
-// Event represents a Kinesis event with one or more records.
+// Event represents a SNS event with one or more records.
 type Event struct {
 	Records []*Record `json:"Records"`
 }
 
-// Record represents a single Kinesis record.
+// Record represents a single SNS record.
 type Record struct {
-	SNS struct {
+	EventSource  string `json:"EventSource"`
+	EventVersion string `json:"EventVersion"`
+	SNS          struct {
 		Type              string                 `json:"Type"`
 		MessageID         string                 `json:"MessageID"`
 		TopicARN          string                 `json:"TopicArn"`
@@ -28,8 +30,6 @@ type Record struct {
 		UnsubscribeURL    string                 `json:"UnsubscribeURL"`
 		MessageAttributes map[string]interface{} `json:"MessageAttributes"`
 	} `json:"Sns"`
-	EventSource  string `json:"EventSource"`
-	EventVersion string `json:"EventVersion"`
 }
 
 // Data returns the payload.
@@ -42,7 +42,7 @@ type Handler interface {
 	HandleSNS(*Event, *apex.Context) error
 }
 
-// HandlerFunc unmarshals Kinesis events before passing control.
+// HandlerFunc unmarshals SNS events before passing control.
 type HandlerFunc func(*Event, *apex.Context) error
 
 // Handle implements apex.Handler.
