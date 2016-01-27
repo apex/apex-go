@@ -57,12 +57,13 @@ func (h HandlerFunc) Handle(data json.RawMessage, ctx *apex.Context) (interface{
 			return nil, err
 		}
 
-		err = json.NewDecoder(r).Decode(&record.Logs)
-		if err != nil {
+		if err = json.NewDecoder(r).Decode(&record.Logs); err != nil {
 			return nil, err
 		}
 
-		r.Close()
+		if err := r.Close(); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := h(&event, ctx); err != nil {
