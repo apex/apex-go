@@ -45,28 +45,17 @@ type HandlerFunc func(*Event, *apex.Context) error
 
 // Handle implements apex.Handler.
 func (h HandlerFunc) Handle(data json.RawMessage, ctx *apex.Context) (interface{}, error) {
-	var event Event
+	event := new(Event)
 
-	if err := json.Unmarshal(data, &event); err != nil {
+	if err := json.Unmarshal(data, event); err != nil {
 		return nil, err
 	}
 
-	for _, record := range event.Records {
-		r, err := gzip.NewReader(bytes.NewReader(record.Data()))
-		if err != nil {
-			return nil, err
-		}
-
-		if err = json.NewDecoder(r).Decode(&record.Logs); err != nil {
-			return nil, err
-		}
-
-		if err := r.Close(); err != nil {
-			return nil, err
-		}
+	if err := decode(event); err != nil {
+		return nil, err
 	}
 
-	if err := h(&event, ctx); err != nil {
+	if err := h(event, ctx); err != nil {
 		return nil, err
 	}
 
@@ -81,4 +70,24 @@ func HandleFunc(h HandlerFunc) {
 // Handle Logs events with handler.
 func Handle(h Handler) {
 	HandleFunc(HandlerFunc(h.HandleLogs))
+}
+
+// decode decodes the log payload which is gzipped.
+func decode(event *Event) error {
+	for _, record := range event.Records {
+		r, err := gzip.NewReader(bytes.NewReader(record.Data()))
+		if err != nil {
+			return err
+		}
+
+		if err = json.NewDecoder(r).Decode(&record.Logs); err != nil {
+			return err
+		}
+
+		if err := r.Close(); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
