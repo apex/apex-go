@@ -34,6 +34,11 @@ func (r *Record) Data() []byte {
 	return r.Kinesis.Data
 }
 
+// Handler handles Kinesis events.
+type Handler interface {
+	HandleKinesis(*Event, *apex.Context) error
+}
+
 // HandlerFunc unmarshals Kinesis events before passing control.
 type HandlerFunc func(*Event, *apex.Context) error
 
@@ -46,4 +51,14 @@ func (h HandlerFunc) Handle(data json.RawMessage, ctx *apex.Context) (interface{
 	}
 
 	return nil, h(&event, ctx)
+}
+
+// HandleFunc handles Kinesis events with callback function.
+func HandleFunc(h HandlerFunc) {
+	apex.Handle(h)
+}
+
+// Handle Kinesis events with handler.
+func Handle(h Handler) {
+	HandleFunc(HandlerFunc(h.HandleKinesis))
 }

@@ -37,6 +37,11 @@ func (r *Record) Data() []byte {
 	return r.SNS.Message
 }
 
+// Handler handles SNS events.
+type Handler interface {
+	HandleSNS(*Event, *apex.Context) error
+}
+
 // HandlerFunc unmarshals Kinesis events before passing control.
 type HandlerFunc func(*Event, *apex.Context) error
 
@@ -49,4 +54,14 @@ func (h HandlerFunc) Handle(data json.RawMessage, ctx *apex.Context) (interface{
 	}
 
 	return nil, h(&event, ctx)
+}
+
+// HandleFunc handles SNS events with callback function.
+func HandleFunc(h HandlerFunc) {
+	apex.Handle(h)
+}
+
+// Handle SNS events with handler.
+func Handle(h Handler) {
+	HandleFunc(HandlerFunc(h.HandleSNS))
 }
