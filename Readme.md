@@ -9,9 +9,14 @@ Currently supports:
 
 - Node.js shim
 - Environment variable population
-- Arbitrary JSON handler
-- Kinesis handler
-- SNS handler
+- Arbitrary JSON
+- CloudWatch Logs
+- Cognito
+- Kinesis
+- Dynamo
+- S3
+- SNS
+- SES
 
 ## Contributors
 

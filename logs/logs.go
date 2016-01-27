@@ -2,9 +2,12 @@
 package logs
 
 import (
+	"bytes"
+	"compress/gzip"
 	"encoding/json"
 
 	"github.com/apex/go-apex"
+	"github.com/apex/go-apex/kinesis"
 )
 
 // LogEvent represents a single log event.
@@ -14,14 +17,22 @@ type LogEvent struct {
 	Message   string `json:"message"`
 }
 
-// Event represents a Logs event with one or more records.
+// Event represents a Kinesis event with one or more records.
 type Event struct {
-	Owner               string      `json:"owner"`
-	LogGroup            string      `json:"logGroup"`
-	LogStream           string      `json:"logStream"`
-	SubscriptionFilters []string    `json:"subscriptionFilters"`
-	MessageType         string      `json:"messageType"`
-	LogEvents           []*LogEvent `json:"logEvents"`
+	Records []*Record `json:"Records"`
+}
+
+// Record represents a single Kinesis record.
+type Record struct {
+	kinesis.Record
+	Logs struct {
+		Owner               string      `json:"owner"`
+		LogGroup            string      `json:"logGroup"`
+		LogStream           string      `json:"logStream"`
+		SubscriptionFilters []string    `json:"subscriptionFilters"`
+		MessageType         string      `json:"messageType"`
+		LogEvents           []*LogEvent `json:"logEvents"`
+	}
 }
 
 // Handler handles Logs events.
@@ -38,6 +49,20 @@ func (h HandlerFunc) Handle(data json.RawMessage, ctx *apex.Context) (interface{
 
 	if err := json.Unmarshal(data, &event); err != nil {
 		return nil, err
+	}
+
+	for _, record := range event.Records {
+		r, err := gzip.NewReader(bytes.NewReader(record.Data()))
+		if err != nil {
+			return nil, err
+		}
+
+		err = json.NewDecoder(r).Decode(&record.Logs)
+		if err != nil {
+			return nil, err
+		}
+
+		r.Close()
 	}
 
 	if err := h(&event, ctx); err != nil {
