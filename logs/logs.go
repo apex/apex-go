@@ -75,7 +75,7 @@ func Handle(h Handler) {
 // decode decodes the log payload which is gzipped.
 func decode(event *Event) error {
 	for _, record := range event.Records {
-		r, err := gzip.NewReader(bytes.NewReader(record.Data()))
+		r, err := gzip.NewReader(bytes.NewReader(record.Kinesis.Data))
 		if err != nil {
 			return err
 		}
