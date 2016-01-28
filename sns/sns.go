@@ -22,7 +22,7 @@ type Record struct {
 		MessageID         string                 `json:"MessageID"`
 		TopicARN          string                 `json:"TopicArn"`
 		Subject           string                 `json:"Subject"`
-		Message           []byte                 `json:"Message"`
+		Message           string                 `json:"Message"`
 		Timestamp         time.Time              `json:"Timestamp"`
 		SignatureVersion  string                 `json:"SignatureVersion"`
 		Signature         string                 `json:"Signature"`
