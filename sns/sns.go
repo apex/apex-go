@@ -32,11 +32,6 @@ type Record struct {
 	} `json:"Sns"`
 }
 
-// Data returns the payload.
-func (r *Record) Data() []byte {
-	return r.SNS.Message
-}
-
 // Handler handles SNS events.
 type Handler interface {
 	HandleSNS(*Event, *apex.Context) error

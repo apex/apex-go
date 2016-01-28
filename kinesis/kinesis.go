@@ -29,11 +29,6 @@ type Record struct {
 	}
 }
 
-// Data returns the payload.
-func (r *Record) Data() []byte {
-	return r.Kinesis.Data
-}
-
 // Handler handles Kinesis events.
 type Handler interface {
 	HandleKinesis(*Event, *apex.Context) error
