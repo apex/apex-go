@@ -9,19 +9,19 @@ Golang runtime support for Apex/Lambda – providing handlers for Lambda source
 package main
 
 import (
-	"encoding/json"
+  "encoding/json"
 
-	"github.com/apex/go-apex"
+  "github.com/apex/go-apex"
 )
 
 type message struct {
-	Value string `json:"value"`
+  Value string `json:"value"`
 }
 
 func main() {
-	apex.HandleFunc(func(event json.RawMessage, ctx *apex.Context) (interface{}, error) {
-		return &message{"Hello World"}, nil
-	})
+  apex.HandleFunc(func(event json.RawMessage, ctx *apex.Context) (interface{}, error) {
+    return &message{"Hello World"}, nil
+  })
 }
 ```
 
