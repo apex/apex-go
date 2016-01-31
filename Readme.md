@@ -3,6 +3,26 @@
 
 Golang runtime support for Apex/Lambda – providing handlers for Lambda sources, and runtime requirements such as interacting with the Node.js shim, and implementing environment variables.
 
+```go
+package main
+
+import (
+	"encoding/json"
+
+	"github.com/apex/go-apex"
+)
+
+type message struct {
+	Value string `json:"value"`
+}
+
+func main() {
+	apex.HandleFunc(func(event json.RawMessage, ctx *apex.Context) (interface{}, error) {
+		return &message{"Hello World"}, nil
+	})
+}
+```
+
 ## Features
 
 Currently supports:
