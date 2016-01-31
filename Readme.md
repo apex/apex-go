@@ -3,6 +3,8 @@
 
 Golang runtime support for Apex/Lambda – providing handlers for Lambda sources, and runtime requirements such as interacting with the Node.js shim, and implementing environment variables.
 
+## Example
+
 ```go
 package main
 
