@@ -1,7 +1,7 @@
 
 # Apex Golang
 
-Golang runtime support for Apex/Lambda – providing handlers for Lambda sources, and runtime requirements such as interacting with the Node.js shim, and implementing environment variables.
+Golang runtime support for Apex/Lambda – providing handlers for Lambda sources, and runtime requirements such as implementing the Node.js shim stdio interface.
 
 ## Example
 
