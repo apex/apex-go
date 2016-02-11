@@ -15,14 +15,28 @@ import (
 )
 
 type message struct {
-  Value string `json:"value"`
+  Greeting string `json:"greeting"`
 }
 
 func main() {
   apex.HandleFunc(func(event json.RawMessage, ctx *apex.Context) (interface{}, error) {
-    return &message{"Hello World"}, nil
+    var m message
+
+    err := json.Unmarshal(event, &m)
+    if err != nil {
+      return &message{}, err
+    }
+
+    return m, nil
   })
 }
+```
+
+Run the program:
+
+```
+echo '{"event":{"greeting":"Hello World!"}}' | go run main.go
+{"value":{"greeting":"Hello World!"}}
 ```
 
 ## Features
