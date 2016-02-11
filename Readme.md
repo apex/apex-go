@@ -10,22 +10,24 @@ package main
 
 import (
   "encoding/json"
+  "strings"
 
   "github.com/apex/go-apex"
 )
 
 type message struct {
-  Greeting string `json:"greeting"`
+  Value string `json:"value"`
 }
 
 func main() {
   apex.HandleFunc(func(event json.RawMessage, ctx *apex.Context) (interface{}, error) {
     var m message
 
-    err := json.Unmarshal(event, &m)
-    if err != nil {
-      return &message{}, err
+    if err := json.Unmarshal(event, &m); err != nil {
+      return nil, err
     }
+
+    m.Value = strings.ToUpper(m.Value)
 
     return m, nil
   })
@@ -35,8 +37,8 @@ func main() {
 Run the program:
 
 ```
-echo '{"event":{"greeting":"Hello World!"}}' | go run main.go
-{"value":{"greeting":"Hello World!"}}
+echo '{"event":{"value":"Hello World!"}}' | go run main.go
+{"value":{"value":"HELLO WORLD!"}}
 ```
 
 ## Features
