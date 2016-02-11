@@ -1,4 +1,4 @@
-// Package cloudformatio provides structs for working with AWS CloudFormation custom resources.
+// Package cloudformation provides structs for working with AWS CloudFormation custom resources.
 package cloudformation
 
 // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html
