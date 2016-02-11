@@ -3,6 +3,21 @@
 
 Golang runtime support for Apex/Lambda – providing handlers for Lambda sources, and runtime requirements such as implementing the Node.js shim stdio interface.
 
+## Features
+
+Currently supports:
+
+- Node.js shim
+- Environment variable population
+- Arbitrary JSON
+- CloudWatch Logs
+- Cognito
+- Kinesis
+- Dynamo
+- S3
+- SNS
+- SES
+
 ## Example
 
 ```go
@@ -40,21 +55,6 @@ Run the program:
 echo '{"event":{"value":"Hello World!"}}' | go run main.go
 {"value":{"value":"HELLO WORLD!"}}
 ```
-
-## Features
-
-Currently supports:
-
-- Node.js shim
-- Environment variable population
-- Arbitrary JSON
-- CloudWatch Logs
-- Cognito
-- Kinesis
-- Dynamo
-- S3
-- SNS
-- SES
 
 ## Contributors
 
