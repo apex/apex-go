@@ -8,7 +8,8 @@ import (
 	"github.com/apex/go-apex"
 )
 
-// Event represents a SNS event with one or more records.
+// Event represents a SNS event. It is safe to assume a single
+// record will be present, as AWS will not send more than one.
 type Event struct {
 	Records []*Record `json:"Records"`
 }
