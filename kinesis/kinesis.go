@@ -37,6 +37,10 @@ type Handler interface {
 // HandlerFunc unmarshals Kinesis events before passing control.
 type HandlerFunc func(*Event, *apex.Context) error
 
+func (h HandlerFunc) HandleKinesis(event *Event, ctx *apex.Context) error {
+	return h(event, ctx)
+}
+
 // Handle implements apex.Handler.
 func (h HandlerFunc) Handle(data json.RawMessage, ctx *apex.Context) (interface{}, error) {
 	var event Event
