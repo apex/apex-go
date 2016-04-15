@@ -56,9 +56,9 @@ echo '{"event":{"value":"Hello World!"}}' | go run main.go
 {"value":{"value":"HELLO WORLD!"}}
 ```
 
-## Contributors
+## Notes
 
-- [TJ Holowaychuk](https://github.com/tj)
+ Due to the Node.js [shim](http://apex.run/#understanding-the-shim) required to run Go in Lambda, you __must__ use stderr for logging – stdout is reserved for the shim.
 
 ## Badges
 
