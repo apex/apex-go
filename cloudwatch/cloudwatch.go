@@ -40,9 +40,9 @@ type EC2Detail struct {
 	State      string `json:"state"`
 }
 
-// ConsoleSignInDetail of the triggered event
-// This is useful for unknown or schedule event types
-type ConsoleSignInDetail struct {
+// APIDetail of the triggered event
+// This is useful for API or Console events
+type APIDetail struct {
 	EventID      string    `json:"eventID"`
 	EventName    string    `json:"eventName"`
 	EventSource  string    `json:"eventSource"`
@@ -51,12 +51,20 @@ type ConsoleSignInDetail struct {
 	EventVersion string    `json:"eventVersion"`
 
 	AWSRegion           string            `json:"awsRegion"`
-	AdditionalEventData map[string]string `json:"additionalEventData"`
+	AdditionalEventData map[string]string `json:"additionalEventData,omitempty"`
 	RequestParams       interface{}       `json:"requestParameters"`
-	ResponseElements    map[string]string `json:"responseElements"`
+	ResponseElements    map[string]string `json:"responseElements,omitempty"`
 	SourceIPAddress     string            `json:"sourceIPAddress"`
 	UserAgent           string            `json:"userAgent"`
-	UserIdentity        map[string]string `json:"userIdentity"`
+	UserIdentity        UserIdentity      `json:"userIdentity,omitempty"`
+}
+
+type UserIdentity struct {
+	Type           string            `json:"type,omitempty"`
+	PrincipleID    string            `json:"principalId,omitempty"`
+	ARN            string            `json:"arn,omitempty"`
+	AccountID      string            `json:"accountId,omitempty"`
+	SessionContext map[string]string `json:"sessionContext,omitempty"`
 }
 
 // Handler handles CloudWatch Events
