@@ -35,6 +35,13 @@ type Context struct {
 	MemoryLimitInMB          string          `json:"memoryLimitInMB"`
 	IsDefaultFunctionVersion bool            `json:"isDefaultFunctionVersion"`
 	ClientContext            json.RawMessage `json:"clientContext"`
+	Identity                 Identity        `json:"identity,omitempty"`
+}
+
+// As defined in: http://docs.aws.amazon.com/mobile/sdkforandroid/developerguide/lambda.html#identity-context
+type Identity struct {
+	CognitoIdentityId       string `json:"cognitoIdentityId"`
+	CognitoIdentityIdPoolId string `json:"cognitoIdentityPoolId"`
 }
 
 // Handle Lambda events with the given handler.
