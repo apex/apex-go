@@ -2,7 +2,6 @@ package cloudwatch
 
 import (
 	"encoding/json"
-	"reflect"
 	"time"
 
 	"github.com/apex/go-apex"
@@ -94,31 +93,4 @@ func HandleFunc(h HandlerFunc) {
 // Handle CloudWatch Events with handler.
 func Handle(h Handler) {
 	HandleFunc(HandlerFunc(h.HandleCloudWatcEvent))
-}
-
-func listKeys(i interface{}) []string {
-	v := reflect.ValueOf(i).Elem()
-	t := v.Type()
-
-	values := []string{}
-	for j := 0; j < v.NumField(); j++ {
-		values = append(values, t.Field(j).Name)
-	}
-
-	return values
-
-}
-
-func keyValue(i interface{}, key string) (interface{}, bool) {
-	v := reflect.ValueOf(i).Elem()
-	t := v.Type()
-
-	for j := 0; j < v.NumField(); j++ {
-		k := t.Field(j).Name
-		if k == key {
-			return v.Field(j).Interface(), true
-		}
-	}
-
-	return nil, false
 }
