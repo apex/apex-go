@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/apex/go-apex"
+	"github.com/aws/aws-sdk-go/service/dynamodbstreams"
 )
 
 // Event represents a Dynamo event with one or more records.
@@ -14,24 +15,12 @@ type Event struct {
 
 // Record represents a single Dynamo record.
 type Record struct {
-	EventID      string `json:"eventID"`
-	EventName    string `json:"eventName"`
-	EventSource  string `json:"eventSource"`
-	EventVersion string `json:"eventVersion"`
-	AWSRegion    string `json:"awsRegion"`
-	Dynamodb     struct {
-		Keys struct {
-			ForumName struct {
-				S string `json:"S"`
-			} `json:"ForumName"`
-			Subject struct {
-				S string `json:"S"`
-			} `json:"Subject"`
-		} `json:"Keys"`
-		SequenceNumber string `json:"SequenceNumber"`
-		SizeBytes      int    `json:"SizeBytes"`
-		StreamViewType string `json:"StreamViewType"`
-	} `json:"dynamodb"`
+	EventID      string                        `json:"eventID"`
+	EventName    string                        `json:"eventName"`
+	EventSource  string                        `json:"eventSource"`
+	EventVersion string                        `json:"eventVersion"`
+	AWSRegion    string                        `json:"awsRegion"`
+	Dynamodb     *dynamodbstreams.StreamRecord `json:"dynamodb"`
 }
 
 // Handler handles Dynamo events.

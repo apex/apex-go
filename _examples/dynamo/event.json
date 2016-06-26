@@ -1,0 +1,52 @@
+{
+  "event": {
+    "Records": [
+      {
+        "eventID": "1",
+        "eventVersion": "1.0",
+        "dynamodb": {
+          "Keys": {
+            "ExampleKey": {
+              "S": "foo"
+            }
+          },
+          "NewImage": {
+            "ExampleKey": {
+              "S": "bar"
+            }
+          },
+          "StreamViewType": "NEW_AND_OLD_IMAGES",
+          "SequenceNumber": "111",
+          "SizeBytes": 26
+        },
+        "awsRegion": "us-west-2",
+        "eventName": "INSERT",
+        "eventSourceARN": "arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+        "eventSource": "aws:dynamodb"
+      },
+      {
+        "eventID": "2",
+        "eventVersion": "1.0",
+        "dynamodb": {
+          "SequenceNumber": "222",
+          "Keys": {
+            "ExampleKey": {
+              "S": "fix"
+            }
+          },
+          "SizeBytes": 59,
+          "NewImage": {
+            "ExampleKey": {
+              "S": "qix"
+            }
+          },
+          "StreamViewType": "NEW_AND_OLD_IMAGES"
+        },
+        "awsRegion": "us-west-2",
+        "eventName": "INSERT",
+        "eventSourceARN": "arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+        "eventSource": "aws:dynamodb"
+      }
+    ]
+  }
+}
