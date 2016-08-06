@@ -36,6 +36,7 @@ type Context struct {
 	IsDefaultFunctionVersion bool            `json:"isDefaultFunctionVersion"`
 	ClientContext            json.RawMessage `json:"clientContext"`
 	Identity                 Identity        `json:"identity,omitempty"`
+	InvokedFunctionARN       string          `json:"invokedFunctionArn"`
 }
 
 // As defined in: http://docs.aws.amazon.com/mobile/sdkforandroid/developerguide/lambda.html#identity-context
