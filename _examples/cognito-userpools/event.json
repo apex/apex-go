@@ -1,0 +1,25 @@
+{
+  "event": {
+    "version": "1",
+    "region": "us-east-1",
+    "userPoolId": "us-east-1_XXXXXXXXX",
+    "userName": "user@example.com",
+    "triggerSource": "CustomMessage_SignUp",
+    "callerContext": {
+        "awsSdkVersion": "aws-sdk-xxx-1.0.0",
+        "clientId": "abcd1234efgh5678ijklm90123"
+    },
+    "request": {
+        "codeParameter": "9876",
+        "userAttributes": {
+            "email_verified": "false",
+            "phone_number_verified": "false"
+        }
+    },
+    "response": {
+        "emailSubject": null,
+        "emailMessage": null,
+        "smsMessage": null
+    }
+  }
+}
