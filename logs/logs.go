@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 
 	"github.com/apex/go-apex"
-	"github.com/apex/go-apex/kinesis"
 )
 
 // LogEvent represents a single log event.
@@ -17,22 +16,21 @@ type LogEvent struct {
 	Message   string `json:"message"`
 }
 
-// Event represents a Kinesis event with one or more records.
-type Event struct {
-	Records []*Record `json:"Records"`
+// Record represents a Cloudwatch logs event with one or more records.
+type Record struct {
+	AWSLogs struct {
+		Data []byte `json:"data"`
+	} `json:"awslogs"`
 }
 
-// Record represents a single Kinesis record.
-type Record struct {
-	kinesis.Record
-	Logs struct {
-		Owner               string      `json:"owner"`
-		LogGroup            string      `json:"logGroup"`
-		LogStream           string      `json:"logStream"`
-		SubscriptionFilters []string    `json:"subscriptionFilters"`
-		MessageType         string      `json:"messageType"`
-		LogEvents           []*LogEvent `json:"logEvents"`
-	}
+// Event represents a single log record.
+type Event struct {
+	Owner               string      `json:"owner"`
+	LogGroup            string      `json:"logGroup"`
+	LogStream           string      `json:"logStream"`
+	SubscriptionFilters []string    `json:"subscriptionFilters"`
+	MessageType         string      `json:"messageType"`
+	LogEvents           []*LogEvent `json:"logEvents"`
 }
 
 // Handler handles Logs events.
@@ -45,13 +43,13 @@ type HandlerFunc func(*Event, *apex.Context) error
 
 // Handle implements apex.Handler.
 func (h HandlerFunc) Handle(data json.RawMessage, ctx *apex.Context) (interface{}, error) {
-	event := new(Event)
+	event, record := new(Event), new(Record)
 
-	if err := json.Unmarshal(data, event); err != nil {
+	if err := json.Unmarshal(data, record); err != nil {
 		return nil, err
 	}
 
-	if err := decode(event); err != nil {
+	if err := decode(record, event); err != nil {
 		return nil, err
 	}
 
@@ -73,20 +71,18 @@ func Handle(h Handler) {
 }
 
 // decode decodes the log payload which is gzipped.
-func decode(event *Event) error {
-	for _, record := range event.Records {
-		r, err := gzip.NewReader(bytes.NewReader(record.Kinesis.Data))
-		if err != nil {
-			return err
-		}
+func decode(record *Record, event *Event) error {
+	r, err := gzip.NewReader(bytes.NewReader(record.AWSLogs.Data))
+	if err != nil {
+		return err
+	}
 
-		if err = json.NewDecoder(r).Decode(&record.Logs); err != nil {
-			return err
-		}
+	if err = json.NewDecoder(r).Decode(&event); err != nil {
+		return err
+	}
 
-		if err := r.Close(); err != nil {
-			return err
-		}
+	if err := r.Close(); err != nil {
+		return err
 	}
 
 	return nil

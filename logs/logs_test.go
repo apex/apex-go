@@ -24,14 +24,9 @@ func fixture(path string) []byte {
 
 var event = []byte(`
 {
-  "Records": [
-		{
-			"eventId": "whatever",
-			"kinesis": {
-				"data": "H4sIAKDlqFYAA91Sy07DMBC89ysqn1vkR+zYvUUQKg5cSMSFoCokVmUpjSvbAVVR/h07DaH0joTwabUzszuzcr9Y+gf0RysN2CwBwiSiLOYCIgxWZ7DR+63R3THgt43u6tyUqrlAM2dkebiW7765u86uZWndGn2pbPdmK6OOTun2XjVOGuv1LyM4Ep60dklVSWvB2HydhAffKfcyPx1lWHiX5MnuMc2yZJteOErfZet+TuznaiSpOsgJEpQgyBhkgjHBCYk5hwJiCmPBYYQRQhHBXDBEIxxhwTFGlPFp1TzNKe/LlYdwo1GAGacUQnjFm9yH1X0BZHD57KP7IxRgUwB0A0kBVgXorDQPtUeVO3nEc50PPHLCYQowgHnwsPqVjOL/Z4zhn8p4/ueL4RNf623ylAMAAA=="
-			}
-		}
-	]
+  "awslogs": {
+		"data": "H4sIAAAAAAAA/zWPwQ6CMBBEf4U0HknaIgJ6IxG56AluhpgCKzYBStpFYoz/botxT5uZt5PZNxnAGNFB+ZqAHDxyTMv0dsmKIs0z4hO1jKCdzoNtuIviZM+s2qsu12qenEHFYmgvhroVtOnV3C4CmweCwR9YoAYxODJgPKIsoUFIr5tzWmZFWYm6WZMta+baNFpOKNV4kj2CNvbqSu6/nZNqzcueMOLqvIls12pubABK+wuKwdXiYRywhHEexfut/3/S0a6ZHDsPH+D95U/1+QKw9SHdCQEAAA=="
+	}
 }
 `)
 
@@ -40,17 +35,19 @@ func TestHandlerFunc_Handle(t *testing.T) {
 
 	fn := func(e *Event, c *apex.Context) error {
 		called = true
-		assert.Equal(t, 1, len(e.Records))
+		assert.Equal(t, 1, len(e.LogEvents))
 
-		record := e.Records[0]
-		assert.Equal(t, "whatever", record.EventID)
-		assert.Equal(t, "123456789012_CloudTrail_us-east-1", record.Logs.LogStream)
-		assert.Equal(t, 3, len(record.Logs.LogEvents))
+		assert.Equal(t, "DATA_MESSAGE", e.MessageType)
+		assert.Equal(t, "1234567890", e.Owner)
+		assert.Equal(t, "/aws/lambda/cloudwatchtest", e.LogGroup)
+		assert.Equal(t, "2016/08/24/[$LATEST]abc12345", e.LogStream)
+		assert.Equal(t, 1, len(e.SubscriptionFilters))
+		assert.Equal(t, "filters1", e.SubscriptionFilters[0])
 
-		log := record.Logs.LogEvents[0]
-		assert.Equal(t, "31953106606966983378809025079804211143289615424298221568", log.ID)
-		assert.Equal(t, int64(1432826855000), log.Timestamp)
-		assert.Equal(t, `{"eventVersion":"1.03","userIdentity":{"type":"Root"}`, log.Message)
+		record := e.LogEvents[0]
+		assert.Equal(t, "11111", record.ID)
+		assert.Equal(t, "testing the message", record.Message)
+
 		return nil
 	}
 
