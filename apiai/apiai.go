@@ -2,7 +2,6 @@ package apiai
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/apex/go-apex"
 )
@@ -34,7 +33,7 @@ type Event struct {
 	ID string `json:"id"`
 
 	// Date and time of the request in UTC timezone using ISO-8601 format.
-	Timestamp time.Time `json:"timestamp"`
+	Timestamp string `json:"timestamp"`
 
 	// Contains the results of the natual language processing.
 	Result struct {
