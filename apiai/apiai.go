@@ -84,6 +84,13 @@ type Event struct {
 
 	// Session ID.
 	SessionID string `json:"sessionId,omitempty"`
+
+	// If a request is sent from one of the messaging platforms,
+	// the "originalRequest" field is added to the response to a query.
+	OriginalRequest struct {
+		Source string                 `json:"source"`
+		Data   map[string]interface{} `json:"data"`
+	} `json:"originalRequest,omitempty"`
 }
 
 // ResponseMessage is JSON.
