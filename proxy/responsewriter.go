@@ -2,7 +2,9 @@ package proxy
 
 import (
 	"bytes"
+	"encoding/base64"
 	"net/http"
+	"strings"
 )
 
 // Response defines parameters for a well formed response AWS Lambda should
@@ -93,5 +95,16 @@ func (w *ResponseWriter) WriteHeader(status int) {
 
 // finish writes the accumulated output to the response.Body
 func (w *ResponseWriter) finish() {
-	w.response.Body = w.output.String()
+
+	// Determine if we should Base64 encode the output
+	contentType := w.response.Headers["Content-Type"]
+
+	// Only encode text content types without base64 encoding
+	w.response.IsBase64Encoded = !strings.HasPrefix(contentType, "text/")
+
+	if w.response.IsBase64Encoded {
+		w.response.Body = base64.StdEncoding.EncodeToString(w.output.Bytes())
+	} else {
+		w.response.Body = w.output.String()
+	}
 }

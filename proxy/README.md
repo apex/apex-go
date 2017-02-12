@@ -34,8 +34,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 
 ## Notes
-As with any Apex handler, you must make sure that your handler doesn't write anything to stdout. If your web framework logs to stdout by default, such as Martini, you need to change the logger output to use stderr.
+As with any Apex handler, you must make sure that your handler doesn't write anything to stdout. 
+If your web framework logs to stdout by default, such as Martini, you need to change the logger output to use stderr.
 
+Any output with a Content-Type that doesn't match `text/*` will be Base64 encoded in the output record.
+In order for this to be returned from API Gateway correctly, you will need to enable binary support and
+map the content types containing binary data.
+
+In practice you can usually map all types as binary using the `*/*` pattern for binary support if you aren't using other
+API Gateway resources which conflict with this.
 
 ## Differences from eawsy
 This implementation reuses a large portion of the event definitions from the eawsy AWS Lambda projects:
@@ -43,6 +50,7 @@ This implementation reuses a large portion of the event definitions from the eaw
  * https://github.com/eawsy/aws-lambda-go-event
  * https://github.com/eawsy/aws-lambda-go-net
 
-However, it wraps a web application in an apex-compatible adapter which makes direct calls to an http.Handler instance rather than creating a fake `net.Conn` and marshalling/unmarshalling the request data.
+However, it wraps a web application in an apex-compatible adapter which makes direct calls to an http.Handler instance
+rather than creating a fake `net.Conn` and marshalling/unmarshalling the request data.
 
 A ResponseWriter implementation captures the response of the handler and constructs an API Gateway Proxy response.
