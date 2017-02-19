@@ -18,6 +18,7 @@
 //   - Relocated to go-apex/proxy
 //   - All code not related to constructing an http.Request removed
 //   - Remaining code placed in buildRequest function
+//   - Slight reorganisation of buildRequest to add comments
 
 package proxy
 
@@ -34,6 +35,7 @@ import (
 
 // Constructs an http.Request object from a proxyEvent
 func buildRequest(proxyEvent *Event, ctx *apex.Context) (*http.Request, error) {
+	// Reconstruct the request URL
 	u, err := url.Parse(proxyEvent.Path)
 	if err != nil {
 		return nil, fmt.Errorf("Parse request path: %s", err)
@@ -44,6 +46,7 @@ func buildRequest(proxyEvent *Event, ctx *apex.Context) (*http.Request, error) {
 	}
 	u.RawQuery = q.Encode()
 
+	// Decode the request body
 	dec := proxyEvent.Body
 	if proxyEvent.IsBase64Encoded {
 		data, err2 := base64.StdEncoding.DecodeString(dec)
@@ -53,16 +56,19 @@ func buildRequest(proxyEvent *Event, ctx *apex.Context) (*http.Request, error) {
 		dec = string(data)
 	}
 
+	// Create a new request object
 	req, err := http.NewRequest(proxyEvent.HTTPMethod, u.String(), strings.NewReader(dec))
 	if err != nil {
 		return nil, fmt.Errorf("Create request: %s", err)
 	}
 
-	proxyEvent.Body = "... truncated"
-
+	// Copy event headers to request
 	for k, v := range proxyEvent.Headers {
 		req.Header.Set(k, v)
 	}
+
+	// Store the original event and context in the request headers
+	proxyEvent.Body = "... truncated"
 	hbody, err := json.Marshal(proxyEvent)
 	if err != nil {
 		return nil, fmt.Errorf("Marshal proxy event: %s", err)
@@ -72,6 +78,7 @@ func buildRequest(proxyEvent *Event, ctx *apex.Context) (*http.Request, error) {
 		req.Header.Set("X-ApiGatewayProxy-Context", string(ctx.ClientContext))
 	}
 
+	// Map additional request information
 	req.Host = proxyEvent.Headers["Host"]
 
 	return req, nil
