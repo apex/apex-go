@@ -46,9 +46,9 @@ func buildRequest(proxyEvent *Event, ctx *apex.Context) (*http.Request, error) {
 
 	dec := proxyEvent.Body
 	if proxyEvent.IsBase64Encoded {
-		data, err := base64.StdEncoding.DecodeString(dec)
-		if err != nil {
-			return nil, fmt.Errorf("Decode base64 request body: %s", err)
+		data, err2 := base64.StdEncoding.DecodeString(dec)
+		if err2 != nil {
+			return nil, fmt.Errorf("Decode base64 request body: %s", err2)
 		}
 		dec = string(data)
 	}

@@ -34,15 +34,32 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 
 ## Notes
+### Stdout vs Stderr
 As with any Apex handler, you must make sure that your handler doesn't write anything to stdout. 
 If your web framework logs to stdout by default, such as Martini, you need to change the logger output to use stderr.
 
-Any output with a Content-Type that doesn't match `text/*` will be Base64 encoded in the output record.
+### Content-Types passed through as plain text output:
+Any output with a Content-Type that doesn't match one of those listed below will be Base64 encoded in the output record.
 In order for this to be returned from API Gateway correctly, you will need to enable binary support and
 map the content types containing binary data.
 
 In practice you can usually map all types as binary using the `*/*` pattern for binary support if you aren't using other
 API Gateway resources which conflict with this.
+
+The text-mode Content-Type regular expressions used by default are:
+* text/.*
+* application/json
+* application/.*\+json
+* application/xml
+* application/.*\+xml
+
+You can override this by calling `proxy.SetTextContentTypes` with a list of regular expressions matching the types that should
+not be Base64 encoded.
+
+### Output encoding
+API gateway will automatically gzip-encode the output of your API, so it's not necessary to gzip the output of your webapp.
+
+If you use your own gzip encoding, it's likely to interfere with the Base64 output for text content types - this hasn't been tested.
 
 ## Differences from eawsy
 This implementation reuses a large portion of the event definitions from the eawsy AWS Lambda projects:

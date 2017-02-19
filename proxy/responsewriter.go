@@ -3,9 +3,49 @@ package proxy
 import (
 	"bytes"
 	"encoding/base64"
+	"log"
 	"net/http"
-	"strings"
+	"regexp"
 )
+
+// DefaultTextContentTypes specifies the content types that will not be Base64 encoded
+// by default. See SetTextContentTypes
+var DefaultTextContentTypes = []string{
+	`text/.*`,
+	`application/json`,
+	`application/.*\+json`,
+	`application/xml`,
+	`application/.*\+xml`,
+}
+
+var textContentTypes []string
+var textContentTypesRegexp *regexp.Regexp
+
+func init() {
+	err := SetTextContentTypes(DefaultTextContentTypes)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// SetTextContentTypes configures the proxy package to skip Base64 encoding of the response
+// body for responses with a Content-Type header matching one of the provided types.
+// Each type provided is a regular expression pattern.
+func SetTextContentTypes(types []string) error {
+	pattern := "(" + types[0]
+	for _, t := range types {
+		pattern += "|" + t
+	}
+	pattern += `)\b.*`
+
+	r, err := regexp.Compile(pattern)
+	if err != nil {
+		return err
+	}
+
+	textContentTypesRegexp = r
+	return nil
+}
 
 // Response defines parameters for a well formed response AWS Lambda should
 // return to Amazon API Gateway.
@@ -100,7 +140,7 @@ func (w *ResponseWriter) finish() {
 	contentType := w.response.Headers["Content-Type"]
 
 	// Only encode text content types without base64 encoding
-	w.response.IsBase64Encoded = !strings.HasPrefix(contentType, "text/")
+	w.response.IsBase64Encoded = !textContentTypesRegexp.MatchString(contentType)
 
 	if w.response.IsBase64Encoded {
 		w.response.Body = base64.StdEncoding.EncodeToString(w.output.Bytes())
