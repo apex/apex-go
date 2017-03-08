@@ -61,13 +61,13 @@ func HandleFunc(h HandlerFunc) {
 	Handle(h)
 }
 
-// input for the node shim.
+// input from the node shim.
 type input struct {
 	Event   json.RawMessage `json:"event"`
 	Context *Context        `json:"context"`
 }
 
-// output from the node shim.
+// output for the node shim.
 type output struct {
 	Error string      `json:"error,omitempty"`
 	Value interface{} `json:"value,omitempty"`
