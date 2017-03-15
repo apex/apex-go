@@ -15,12 +15,13 @@ type Event struct {
 
 // Record represents a single Dynamo record.
 type Record struct {
-	EventID      string        `json:"eventID"`
-	EventName    string        `json:"eventName"`
-	EventSource  string        `json:"eventSource"`
-	EventVersion string        `json:"eventVersion"`
-	AWSRegion    string        `json:"awsRegion"`
-	Dynamodb     *StreamRecord `json:"dynamodb"`
+	EventID        string        `json:"eventID"`
+	EventName      string        `json:"eventName"`
+	EventSource    string        `json:"eventSource"`
+        EventSourceARN string        `json:"eventSourceARN"`
+	EventVersion   string        `json:"eventVersion"`
+	AWSRegion      string        `json:"awsRegion"`
+	Dynamodb       *StreamRecord `json:"dynamodb"`
 }
 
 // StreamRecord represents a Dynamo stream records
