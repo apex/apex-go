@@ -10,6 +10,10 @@ import (
 
 // Serve adaptes an http.Handler to the apex.Handler interface.
 func Serve(h http.Handler) apex.Handler {
+	if h == nil {
+		h = http.DefaultServeMux
+	}
+
 	return &handler{h}
 }
 
