@@ -39,10 +39,10 @@ type Context struct {
 	InvokedFunctionARN       string          `json:"invokedFunctionArn"`
 }
 
-// As defined in: http://docs.aws.amazon.com/mobile/sdkforandroid/developerguide/lambda.html#identity-context
+// Identity as defined in: http://docs.aws.amazon.com/mobile/sdkforandroid/developerguide/lambda.html#identity-context
 type Identity struct {
-	CognitoIdentityId       string `json:"cognitoIdentityId"`
-	CognitoIdentityIdPoolId string `json:"cognitoIdentityPoolId"`
+	CognitoIdentityID       string `json:"cognitoIdentityId"`
+	CognitoIdentityIDPoolID string `json:"cognitoIdentityPoolId"`
 }
 
 // Handle Lambda events with the given handler.
