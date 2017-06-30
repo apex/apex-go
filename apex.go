@@ -5,6 +5,7 @@ package apex
 
 import (
 	"encoding/json"
+	apex_fun "github.com/apex/apex/function"
 	"io"
 	"log"
 	"os"
@@ -69,7 +70,7 @@ type input struct {
 
 // output for the node shim.
 type output struct {
-	Error string      `json:"error,omitempty"`
+	Error interface{} `json:"error,omitempty"`
 	Value interface{} `json:"value,omitempty"`
 }
 
@@ -142,6 +143,9 @@ func (m *manager) invoke(msg *input) *output {
 	v, err := m.Handler.Handle(msg.Event, msg.Context)
 
 	if err != nil {
+		if invokeErr, ok := err.(*apex_fun.InvokeError); ok {
+			return &output{Error: invokeErr}
+		}
 		return &output{Error: err.Error()}
 	}
 
