@@ -62,12 +62,17 @@ func HandleFunc(h HandlerFunc) {
 
 // input from the node shim.
 type input struct {
+	// ID is an itentifier that is boomeranged back to the called,
+	// to allow for concurrent commands
+	ID      string          `json:"id,omitempty"`
 	Event   json.RawMessage `json:"event"`
 	Context *Context        `json:"context"`
 }
 
 // output for the node shim.
 type output struct {
+	// The boomeranged ID from the caller
+	ID    string      `json:"id,omitempty"`
 	Error string      `json:"error,omitempty"`
 	Value interface{} `json:"value,omitempty"`
 }
@@ -98,7 +103,7 @@ func (m *manager) Start() {
 		}
 
 		v, err := m.Handler.Handle(msg.Event, msg.Context)
-		out := output{Value: v}
+		out := output{ID: msg.ID, Value: v}
 
 		if err != nil {
 			out.Error = err.Error()
