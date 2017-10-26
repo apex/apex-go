@@ -62,7 +62,7 @@ func HandleFunc(h HandlerFunc) {
 
 // input from the node shim.
 type input struct {
-	// ID is an itentifier that is boomeranged back to the called,
+	// ID is an identifier that is boomeranged back to the called,
 	// to allow for concurrent commands
 	ID      string          `json:"id,omitempty"`
 	Event   json.RawMessage `json:"event"`
