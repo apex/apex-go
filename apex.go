@@ -5,6 +5,7 @@ package apex
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -73,7 +74,7 @@ type input struct {
 type output struct {
 	// The boomeranged ID from the caller
 	ID    string      `json:"id,omitempty"`
-	Error string      `json:"error,omitempty"`
+	Error interface{} `json:"error,omitempty"`
 	Value interface{} `json:"value,omitempty"`
 }
 
@@ -82,6 +83,50 @@ type manager struct {
 	Reader  io.Reader
 	Writer  io.Writer
 	Handler Handler
+}
+
+// Error allows apex functions to return structured node errors
+// http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-mode-exceptions.html
+//
+// Unfortunately, AWS doesn't provide a mechanism to override the stack trace.
+// Consequently, when a custom error is returned the node stack trace will be
+// used which isn't particularly helpful.
+//
+type Error interface {
+	// Error implements error
+	Error() string
+
+	// ErrorType provides a specific error type useful for switching in Step Functions
+	ErrorType() string
+
+	// ErrorMessage contains the human readable string message
+	ErrorMessage() string
+}
+
+// customError holds custom error message
+type customError struct {
+	errorType    string
+	errorMessage string
+}
+
+func (c customError) Error() string {
+	return fmt.Sprintf("%v: %v", c.errorType, c.errorMessage)
+}
+
+func (c customError) ErrorType() string {
+	return c.errorType
+}
+
+func (c customError) ErrorMessage() string {
+	return c.errorMessage
+}
+
+// NewError creates Error message with custom error type; useful for AWS Step Functions
+func NewError(errorType, errorMessage string) Error {
+	return customError{
+		errorType:    errorType,
+		errorMessage: errorMessage,
+	}
 }
 
 // Start the manager.
@@ -106,7 +151,18 @@ func (m *manager) Start() {
 		out := output{ID: msg.ID, Value: v}
 
 		if err != nil {
-			out.Error = err.Error()
+			if ae, ok := err.(Error); ok {
+				out.Error = struct {
+					ErrorType    string `json:"errorType,omitempty"`
+					ErrorMessage string `json:"errorMessage,omitempty"`
+				}{
+					ErrorType:    ae.ErrorType(),
+					ErrorMessage: ae.ErrorMessage(),
+				}
+
+			} else {
+				out.Error = err.Error()
+			}
 		}
 
 		if err := enc.Encode(out); err != nil {
