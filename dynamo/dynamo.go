@@ -22,6 +22,12 @@ type Record struct {
 	EventVersion   string        `json:"eventVersion"`
 	AWSRegion      string        `json:"awsRegion"`
 	Dynamodb       *StreamRecord `json:"dynamodb"`
+	UserIdentity   UserIdentity  `json:"userIdentity,omitempty"`
+}
+
+type UserIdentity struct {
+	Type        string `json:"type,omitempty"`
+	PrincipleID string `json:"principalId,omitempty"`
 }
 
 // StreamRecord represents a Dynamo stream records
