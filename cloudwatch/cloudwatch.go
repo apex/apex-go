@@ -68,7 +68,7 @@ type UserIdentity struct {
 
 // Handler handles CloudWatch Events
 type Handler interface {
-	HandleCloudWatcEvent(*Event, *apex.Context) error
+	HandleCloudWatchEvent(*Event, *apex.Context) error
 }
 
 // HandlerFunc unmarshals CloudWatch Events before passing control.
@@ -92,5 +92,5 @@ func HandleFunc(h HandlerFunc) {
 
 // Handle CloudWatch Events with handler.
 func Handle(h Handler) {
-	HandleFunc(HandlerFunc(h.HandleCloudWatcEvent))
+	HandleFunc(HandlerFunc(h.HandleCloudWatchEvent))
 }
