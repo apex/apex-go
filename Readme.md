@@ -3,7 +3,7 @@
 
 Golang runtime support for Apex/Lambda – providing handlers for Lambda sources, and runtime requirements such as implementing the Node.js shim stdio interface.
 
-__NOTE__: apex(1) v1.x supports native Go, so you should use https://github.com/aws/aws-lambda-go instead of this package.
+__NOTE__: `apex` v1.x supports native Go, so you should use https://github.com/aws/aws-lambda-go instead of this package.
 
 ## Features
 
